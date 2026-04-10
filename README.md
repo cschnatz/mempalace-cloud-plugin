@@ -18,13 +18,21 @@ claude plugin add github:cschnatz/mempalace-cloud-plugin
 
 Installs MCP connection + memory skill in one command. On first use, opens browser for OAuth login.
 
-### Codex CLI (plugin)
+### Codex CLI (one-liner)
+
+**macOS / Linux:**
 
 ```bash
-codex plugin add github:cschnatz/mempalace-cloud-plugin
+curl -sL https://www.mempalace.cloud/skill-packs/install-codex.sh | bash
 ```
 
-Same as Claude Code — MCP connection + memory skill.
+**Windows (PowerShell):**
+
+```powershell
+irm https://www.mempalace.cloud/skill-packs/install-codex.ps1 | iex
+```
+
+Adds the MCP server (with OAuth login) and downloads the memory skill into your project's `AGENTS.md`.
 
 ### Claude Desktop
 
@@ -63,18 +71,19 @@ Your memories persist across sessions, projects, and tools. Every conversation b
 ## Repository structure
 
 ```
-.claude-plugin/          # Claude Code plugin
+.claude-plugin/          # Claude Code plugin (used by `claude plugin add`)
   plugin.json
+  marketplace.json
   .mcp.json
   skills/mempalace-cloud/SKILL.md
 
-.codex-plugin/           # Codex CLI plugin
+.codex-plugin/           # Codex CLI plugin (skill reference)
   plugin.json
   skills/mempalace-cloud/SKILL.md
 
 skill-packs/             # Manual instructions for other tools
-  claude-desktop.md
-  cursor.md
+  claude-desktop.md      # Claude Desktop setup + instruction block
+  cursor.md              # Cursor setup + rules block
 ```
 
 ## Requirements
@@ -92,8 +101,8 @@ It should call `mempalace_search` or `mempalace_kg_query` before answering. If i
 
 **AI says "I don't have memory tools"**
 - Claude Code: Run `claude mcp list` — you should see `mempalace-cloud` with status `connected`
-- Codex: Run `codex mcp list`
-- If not listed, reinstall the plugin
+- Codex: Run `codex mcp list` — and check that `AGENTS.md` exists in your project with the Memory Protocol section
+- If not listed, reinstall (plugin for Claude Code, install script for Codex)
 
 **OAuth login doesn't complete**
 - Make sure you have a MemPalace Cloud account at [mempalace.cloud](https://mempalace.cloud)
