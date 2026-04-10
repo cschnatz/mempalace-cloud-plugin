@@ -1,0 +1,6 @@
+{
+  "mempalace-cloud": {
+    "type": "http",
+    "url": "https://api.mempalace.cloud/mcp"
+  }
+}

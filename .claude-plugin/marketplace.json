@@ -1,0 +1,18 @@
+{
+  "name": "mempalace-cloud",
+  "owner": {
+    "name": "cschnatz",
+    "url": "https://github.com/cschnatz"
+  },
+  "plugins": [
+    {
+      "name": "mempalace-cloud",
+      "source": "./.claude-plugin",
+      "description": "Persistent AI memory as a service. Connects via OAuth MCP — no API keys, no local setup. Includes memory protocol skill.",
+      "version": "1.0.0",
+      "author": {
+        "name": "cschnatz"
+      }
+    }
+  ]
+}
