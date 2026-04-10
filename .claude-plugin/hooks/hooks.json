@@ -1,0 +1,25 @@
+{
+  "description": "MemPalace Cloud auto-save hooks — triggers memory saves via MCP tools",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/mempal-cloud-stop-hook.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/mempal-cloud-precompact-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
