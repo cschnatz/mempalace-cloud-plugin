@@ -1,24 +1,58 @@
 # MemPalace Cloud Plugin
 
-Claude Code plugin for [MemPalace Cloud](https://mempalace.cloud) — persistent AI memory as a service.
+Plugins and skill packs for [MemPalace Cloud](https://mempalace.cloud) — persistent AI memory as a service.
 
 ## What it does
 
-1. **Connects Claude Code to MemPalace Cloud** via OAuth MCP (no API keys, no local setup)
-2. **Teaches Claude to use memory proactively** — recall facts before answering, save learnings after tasks
+1. **Connects your AI tool to MemPalace Cloud** via OAuth MCP (no API keys, no local setup)
+2. **Teaches the AI to use memory proactively** — recall facts before answering, save learnings after tasks
 3. **Everything reviewed** — captured memories land in your Inbox for approval before becoming permanent
 
 ## Installation
+
+### Claude Code (plugin — recommended)
 
 ```bash
 claude plugin add github:cschnatz/mempalace-cloud-plugin
 ```
 
-On first use, Claude Code will open a browser window for OAuth login. After that, memory just works.
+Installs MCP connection + memory skill in one command. On first use, opens browser for OAuth login.
+
+### Codex CLI (plugin)
+
+```bash
+codex plugin add github:cschnatz/mempalace-cloud-plugin
+```
+
+Same as Claude Code — MCP connection + memory skill.
+
+### Claude Desktop
+
+```bash
+claude mcp add mempalace-cloud --transport http https://api.mempalace.cloud/mcp -s user
+```
+
+Then add the memory instructions to your Project Settings. See [`skill-packs/claude-desktop.md`](skill-packs/claude-desktop.md) for the full instruction block.
+
+### Cursor
+
+Add to your MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "mempalace-cloud": {
+      "url": "https://api.mempalace.cloud/mcp"
+    }
+  }
+}
+```
+
+Then add the memory instructions to Cursor Rules. See [`skill-packs/cursor.md`](skill-packs/cursor.md) for the full instruction block.
 
 ## What happens after install
 
-Claude Code gains 15+ memory tools (`mempalace_search`, `mempalace_kg_query`, `mempalace_diary_write`, etc.) and a skill that tells it:
+Your AI gains 15+ memory tools (`mempalace_search`, `mempalace_kg_query`, `mempalace_diary_write`, etc.) and a skill that tells it:
 
 - **Before responding** about a person, project, or past event → search memory first
 - **After completing** a significant task or learning something → save it to memory
@@ -26,28 +60,40 @@ Claude Code gains 15+ memory tools (`mempalace_search`, `mempalace_kg_query`, `m
 
 Your memories persist across sessions, projects, and tools. Every conversation builds on the last.
 
+## Repository structure
+
+```
+.claude-plugin/          # Claude Code plugin
+  plugin.json
+  .mcp.json
+  skills/mempalace-cloud/SKILL.md
+
+.codex-plugin/           # Codex CLI plugin
+  plugin.json
+  skills/mempalace-cloud/SKILL.md
+
+skill-packs/             # Manual instructions for other tools
+  claude-desktop.md
+  cursor.md
+```
+
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
-- A MemPalace Cloud account (free tier available at [mempalace.cloud](https://mempalace.cloud))
-
-## How it works
-
-The plugin registers an HTTP MCP server pointing at `api.mempalace.cloud/mcp`. Authentication uses OAuth 2.0 with PKCE — Claude Code handles the browser-based login flow automatically.
-
-The memory protocol skill (`SKILL.md`) is loaded into Claude's context, teaching it when and how to call memory tools. No local Python or database required — everything runs on MemPalace Cloud's servers.
+- A MemPalace Cloud account (free tier at [mempalace.cloud](https://mempalace.cloud))
+- One of: Claude Code, Codex CLI, Claude Desktop, or Cursor
 
 ## Verification
 
-After installing, ask Claude: *"What do you know about my preferences?"*
+After installing, ask your AI: *"What do you know about my preferences?"*
 
-Claude should call `mempalace_search` or `mempalace_kg_query` before answering. If it doesn't, restart Claude Code and try again.
+It should call `mempalace_search` or `mempalace_kg_query` before answering. If it doesn't, check that the MCP server is connected and restart your tool.
 
 ## Troubleshooting
 
-**Claude says "I don't have memory tools"**
-- Run `claude mcp list` — you should see `mempalace-cloud` with status `connected`
-- If not listed, reinstall: `claude plugin add github:cschnatz/mempalace-cloud-plugin`
+**AI says "I don't have memory tools"**
+- Claude Code: Run `claude mcp list` — you should see `mempalace-cloud` with status `connected`
+- Codex: Run `codex mcp list`
+- If not listed, reinstall the plugin
 
 **OAuth login doesn't complete**
 - Make sure you have a MemPalace Cloud account at [mempalace.cloud](https://mempalace.cloud)

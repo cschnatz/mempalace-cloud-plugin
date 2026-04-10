@@ -1,0 +1,48 @@
+{
+  "name": "mempalace-cloud",
+  "version": "1.0.0",
+  "description": "Persistent AI memory as a service — connect to MemPalace Cloud via OAuth MCP. Includes memory protocol skill.",
+  "author": {
+    "name": "cschnatz"
+  },
+  "homepage": "https://mempalace.cloud",
+  "repository": "https://github.com/cschnatz/mempalace-cloud-plugin",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "ai",
+    "mcp",
+    "oauth",
+    "cloud",
+    "mempalace",
+    "persistent-memory"
+  ],
+  "skills": "./skills/",
+  "mcpServers": {
+    "mempalace-cloud": {
+      "type": "http",
+      "url": "https://api.mempalace.cloud/mcp"
+    }
+  },
+  "interface": {
+    "displayName": "MemPalace Cloud",
+    "shortDescription": "Persistent AI memory as a service",
+    "longDescription": "Give your AI a persistent, cross-session memory backed by MemPalace Cloud. OAuth MCP — no local setup, no API keys. Recall facts before answering, save learnings after tasks.",
+    "developerName": "cschnatz",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://mempalace.cloud",
+    "privacyPolicyURL": "https://mempalace.cloud/privacy",
+    "termsOfServiceURL": "https://mempalace.cloud/terms",
+    "defaultPrompt": [
+      "What do you remember about my preferences?",
+      "Search my memories for recent decisions",
+      "Remember that I prefer TypeScript for web projects"
+    ],
+    "brandColor": "#6366F1"
+  }
+}
