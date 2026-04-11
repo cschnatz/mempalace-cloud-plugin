@@ -2,56 +2,54 @@
 
 ## Setup
 
-1. Open Cursor Settings > MCP Servers and add:
-   ```json
-   {
-     "mcpServers": {
-       "mempalace-cloud": {
-         "url": "https://api.mempalace.cloud/mcp"
-       }
-     }
-   }
-   ```
+### 1. Add the MCP server
 
-2. Go to Cursor Settings > Rules and paste the instruction block below.
+Open **Cursor Settings → MCP Servers → Add new** and paste:
 
-## Cursor Rules Block
-
+```json
+{
+  "mcpServers": {
+    "mempalace-cloud": {
+      "url": "https://api.mempalace.cloud/mcp"
+    }
+  }
+}
 ```
-# Memory Protocol (MemPalace Cloud)
 
-You have access to a persistent, multi-session memory system through the
-mempalace_* MCP tool surface. The memory spans all your sessions, projects,
-and tools — it's the user's shared knowledge with you.
+Cursor should show a green dot next to `mempalace-cloud` once connected.
+On first connection, a browser opens for OAuth login.
 
-## When to recall
+### 2. Add the memory protocol to User Rules
 
-Before responding about anything related to a person, project, past
-decision, or past event, call one of these first:
+Cursor doesn't support plugins the way Claude Code does, so the memory
+protocol has to be pasted into Rules once.
 
-- mempalace_kg_query — structured facts about entities
-- mempalace_search — semantic search of free-form memories
-- mempalace_kg_timeline — chronological view of events
+The full, up-to-date instruction block is hosted at:
 
-If the memory has nothing, say so explicitly. NEVER invent facts.
+**https://www.mempalace.cloud/skill-packs/cursor-rules.md**
 
-## When to save
+Copy its content and paste it into:
 
-After completing a significant task or learning something new, call:
+**Cursor Settings → Rules → User Rules**
 
-- mempalace_kg_add — for atomic facts
-- mempalace_diary_write — for narrative events
+(Use User Rules, not project-level `.cursorrules` — User Rules get the
+broadest coverage across Compose, Chat, and Inline.)
 
-Write freely. Everything lands in the user's Inbox first for review.
-Items auto-approve after 24 hours.
-
-## Tips
-
-- Prefer descriptive queries over vague ones
-- If a search result is marked "pending", mention it as provisional
-- Call mempalace_kg_invalidate when you discover a previously-recorded fact is wrong
-```
+The hosted version is kept in sync with the plugin (currently v1.2.0) and
+includes Discovery First, Palace Structure, the Save Decision Flow with
+Creation Gate, and Anti-patterns.
 
 ## Verification
 
-Ask Cursor: "What do you know about my preferences?" — it should call `mempalace_search` before answering.
+Open the Cursor chat panel and ask:
+
+> "What do you know about my preferences?"
+
+Cursor should call `mempalace_list_wings` followed by `mempalace_search`
+before answering.
+
+## Updates
+
+When the plugin version bumps (e.g., 1.2.0 → 1.3.0), re-copy the hosted
+block into your User Rules to stay current. There is no automatic update
+path for pasted rules.
