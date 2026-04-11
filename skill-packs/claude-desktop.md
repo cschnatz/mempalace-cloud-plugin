@@ -1,51 +1,47 @@
-# MemPalace Cloud — Claude Desktop Instructions
+# MemPalace Cloud — Claude Desktop Setup
 
 ## Setup
 
-1. Connect MCP (run in terminal):
-   ```
-   claude mcp add mempalace-cloud --transport http https://api.mempalace.cloud/mcp -s user
-   ```
+### 1. Connect the MCP server
 
-2. In Claude Desktop, open **Project Settings** and paste the instruction block below into **Custom Instructions**.
+Run this in your terminal:
 
-## Instruction Block
-
+```bash
+claude mcp add mempalace-cloud --transport http https://api.mempalace.cloud/mcp -s user
 ```
-# Memory Protocol (MemPalace Cloud)
 
-You have access to a persistent, multi-session memory system through the
-mempalace_* MCP tool surface. The memory spans all your sessions, projects,
-and tools — it's the user's shared knowledge with you.
+This opens a browser window for OAuth login. After login, quit and restart
+Claude Desktop.
 
-## When to recall
+### 2. Add the memory protocol to Custom Instructions
 
-Before responding about anything related to a person, project, past
-decision, or past event, call one of these first:
+Claude Desktop doesn't support plugins, so the memory protocol has to be
+pasted into Custom Instructions once per project (or globally in Settings).
 
-- mempalace_kg_query — structured facts about entities
-- mempalace_search — semantic search of free-form memories
-- mempalace_kg_timeline — chronological view of events
+The full, up-to-date instruction block is hosted at:
 
-If the memory has nothing, say so explicitly. NEVER invent facts.
+**https://www.mempalace.cloud/skill-packs/claude-desktop-instructions.md**
 
-## When to save
+Copy its content and paste it into:
 
-After completing a significant task or learning something new, call:
+- **Project:** Open a Project → Project Settings → Custom Instructions
+- **Global:** Settings → Profile → What personal preferences should Claude consider in responses?
 
-- mempalace_kg_add — for atomic facts
-- mempalace_diary_write — for narrative events
-
-Write freely. Everything lands in the user's Inbox first for review.
-Items auto-approve after 24 hours.
-
-## Tips
-
-- Prefer descriptive queries over vague ones
-- If a search result is marked "pending", mention it as provisional
-- Call mempalace_kg_invalidate when you discover a previously-recorded fact is wrong
-```
+The hosted version is kept in sync with the plugin (currently v1.2.0) and
+includes Discovery First, Palace Structure, the Save Decision Flow with
+Creation Gate, and Anti-patterns.
 
 ## Verification
 
-Ask Claude: "What do you know about my preferences?" — it should call `mempalace_search` before answering.
+Start a new conversation in the project and ask:
+
+> "What do you know about my preferences?"
+
+Claude should call `mempalace_list_wings` followed by `mempalace_search`
+before answering.
+
+## Updates
+
+When the plugin version bumps (e.g., 1.2.0 → 1.3.0), re-copy the hosted
+block into your Custom Instructions to stay current. There is no automatic
+update path for pasted instructions.
