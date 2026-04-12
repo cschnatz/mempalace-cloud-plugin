@@ -35,7 +35,7 @@ Copy its content and paste it into:
 (Use User Rules, not project-level `.cursorrules` — User Rules get the
 broadest coverage across Compose, Chat, and Inline.)
 
-The hosted version is kept in sync with the plugin (currently v1.2.0) and
+The hosted version is kept in sync with the plugin (currently v1.3.0) and
 includes Discovery First, Palace Structure, the Save Decision Flow with
 Creation Gate, and Anti-patterns.
 
