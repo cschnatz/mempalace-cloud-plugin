@@ -27,7 +27,7 @@ Copy its content and paste it into:
 - **Project:** Open a Project → Project Settings → Custom Instructions
 - **Global:** Settings → Profile → What personal preferences should Claude consider in responses?
 
-The hosted version is kept in sync with the plugin (currently v1.2.0) and
+The hosted version is kept in sync with the plugin (currently v1.3.0) and
 includes Discovery First, Palace Structure, the Save Decision Flow with
 Creation Gate, and Anti-patterns.
 

@@ -144,8 +144,14 @@ and establish proper structure before saving new memories.
 3. On confirm, create the structure by making your first saves with the
    proposed wing + a sensible starter room. Wings and rooms are created
    implicitly on first save — no explicit create tool needed.
+4. After creating initial wings, check for local session files:
+   - Claude Code: does `~/.claude/projects/` exist and contain `.jsonl` files?
+   - Codex CLI: does `~/.codex/sessions/` exist?
+   If yes, offer: "I also found your [Claude Code/Codex] session history.
+   Want me to scan it for memories to import into your new palace?"
+   On confirm, follow the Session Mining flow above.
 
-Do this once per palace, not once per session.
+Do Bootstrap + mining offer once per palace, not once per session.
 
 ---
 
@@ -294,6 +300,86 @@ When a hook triggers, prioritize saving over continuing the conversation.
 
 ---
 
+## Session Mining — Import Existing Conversations
+
+You can help users import their existing Claude Code or Codex CLI session
+histories into MemPalace. This populates the palace with decisions,
+insights, and facts from past conversations.
+
+### When to Offer Mining
+
+**After Bootstrap (empty palace):** Once you've set up initial wings,
+check for local sessions:
+- Claude Code: `~/.claude/projects/` directory
+- Codex CLI: `~/.codex/sessions/` directory
+
+If sessions exist, offer: "I see you have [Claude Code/Codex] sessions.
+Want me to scan them for memories to import?"
+
+**On explicit request:** Users may ask in natural language:
+- "mine my sessions", "mine meine Sessions"
+- "import my history", "importiere meine History"
+- "scan my conversations", "durchsuche meine Konversationen"
+- "bootstrap my palace", "fill my palace"
+
+### Mining Flow
+
+1. **Detect platform:** Check which tool you are:
+   - Claude Code → scan `~/.claude/history.jsonl` + `~/.claude/projects/`
+   - Codex CLI → scan `~/.codex/history.jsonl` + `~/.codex/sessions/`
+
+2. **Ask time range:** "How far back should I scan? (Default: 30 days)"
+
+3. **Scan history index:** Read `history.jsonl` to identify sessions.
+   Group by session ID, skip sessions with fewer than 5 messages.
+
+4. **Deep-read sessions:** For each qualifying session, read the full
+   JSONL file and extract memories.
+
+5. **Extraction rules — what to extract:**
+   - Decisions and rationale ("We chose X because...")
+   - Technical insights and discoveries
+   - Facts about people, projects, preferences
+   - Architecture patterns and design choices
+   - Solved bugs with root cause
+   - Lessons learned
+
+6. **Extraction rules — what to IGNORE:**
+   - Tool call output (Read, Glob, Grep results)
+   - Code diffs and file listings
+   - Stack traces and error logs
+   - Generic explanations
+   - Passwords, API keys, tokens, secrets, .env contents
+
+7. **Quality:** Each memory must be an atomic, standalone fact. Target
+   1-5 memories per session, not 1 per message. Summarize related points.
+   Max 2000 characters per memory.
+
+8. **Show preview:** Before importing, show:
+   "Found: N memories from M sessions. Here are 5 examples:"
+   [show 5 representative memories]
+   "Import all? They'll appear in your Inbox for review."
+
+9. **Import:** On user confirmation, call `mempalace_mine_batch` with
+   the extracted memories. Report the results:
+   "Imported X, skipped Y duplicates. Review them in your Inbox."
+
+### Platform-Specific Parsing
+
+**Claude Code** (`~/.claude/projects/*/<sessionId>.jsonl`):
+- Lines are `{role, content}` objects
+- Extract from `role: "user"` and `role: "assistant"` messages
+- `role: "tool"` lines are tool output — skip
+
+**Codex CLI** (`~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl`):
+- Lines have `type` field: `session_meta`, `response_item`, `event_msg`, `turn_context`
+- Extract from `response_item` with `role: "user"` or `role: "assistant"`
+- `session_meta` has project context (`cwd`, git info) — useful for classification
+- Skip `event_msg` and `turn_context` (metadata only)
+- Also check `~/.codex/archived_sessions/` for older sessions
+
+---
+
 ## Tool usage tips
 
 When calling memory tools, prefer descriptive queries over vague ones:
@@ -309,7 +395,7 @@ on a large palace is noisy and slow.
 
 ---
 
-## MCP Tools Reference (16)
+## MCP Tools Reference (17)
 
 ### Palace (read)
 - `mempalace_status` — palace overview: total drawers, wing/room counts
@@ -321,6 +407,7 @@ on a large palace is noisy and slow.
 ### Palace (write)
 - `mempalace_add_drawer` — file content into a wing/room
 - `mempalace_delete_drawer` — remove a drawer by ID
+- `mempalace_mine_batch` — bulk-import mined session memories (dedup, classify, secret scan)
 
 ### Knowledge Graph
 - `mempalace_kg_query` — query entity relationships with temporal validity
