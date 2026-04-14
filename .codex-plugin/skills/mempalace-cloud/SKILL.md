@@ -121,9 +121,19 @@ Think about tunnels when:
 - A bug pattern from project A applies to project B
 - A lesson learned (self wing) is specific to a particular project
 
-Tunnels form automatically when rooms in different wings share enough
-conceptual ground — you don't create them explicitly. Good room naming
-makes tunnels findable later.
+Tunnels can be discovered or created explicitly:
+- `mempalace_find_tunnels(wing_a, wing_b)` — discover natural bridges
+  based on content similarity.
+- `mempalace_create_tunnel(source_wing, source_room, target_wing,
+  target_room, label)` — create an explicit tunnel. Always include a
+  `label` explaining why the connection exists.
+
+**When to create tunnels:**
+- A user's preferences shaped a project decision
+- A bug pattern from project A applies to project B
+- An architecture decision in one project mirrors another
+
+**When NOT to:** Don't tunnel speculatively. Search first, tunnel if recurring.
 
 ---
 
@@ -219,8 +229,8 @@ Every save must answer three questions **in order**:
 - Session summary or self-reflection → self wing (e.g. `wing_claude`)
 - Cross-cutting knowledge (not tied to one project) → topic wing
   (e.g. `wing_oauth`)
-- Topic spans two existing wings → pick the primary one; a tunnel forms
-  automatically if the content connects to an existing room elsewhere
+- Topic spans two existing wings → pick the primary one; consider creating
+  a tunnel with `mempalace_create_tunnel` if the cross-wing link is recurring
 
 **2. Which room?** Match by subject.
 - List rooms for the chosen wing first: `mempalace_list_rooms(wing)`
