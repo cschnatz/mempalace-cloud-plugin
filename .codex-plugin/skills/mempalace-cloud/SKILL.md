@@ -395,7 +395,7 @@ on a large palace is noisy and slow.
 
 ---
 
-## MCP Tools Reference (17)
+## MCP Tools Reference (30)
 
 ### Palace (read)
 - `mempalace_status` — palace overview: total drawers, wing/room counts
@@ -403,9 +403,15 @@ on a large palace is noisy and slow.
 - `mempalace_list_rooms` — rooms within a wing
 - `mempalace_search` — semantic search with optional wing/room filter
 - `mempalace_graph_stats` — palace graph connectivity overview
+- `mempalace_get_taxonomy` — full taxonomy: wing → room → drawer count
+- `mempalace_get_aaak_spec` — get the AAAK compressed memory format spec
+- `mempalace_check_duplicate` — check if content already exists (similarity threshold)
 
 ### Palace (write)
 - `mempalace_add_drawer` — file content into a wing/room
+- `mempalace_get_drawer` — fetch a single drawer by ID with full content
+- `mempalace_list_drawers` — list drawers with pagination and wing/room filter
+- `mempalace_update_drawer` — update drawer content and/or metadata
 - `mempalace_delete_drawer` — remove a drawer by ID
 - `mempalace_mine_batch` — bulk-import mined session memories (dedup, classify, secret scan)
 
@@ -420,9 +426,20 @@ on a large palace is noisy and slow.
 - `mempalace_traverse` — walk the palace graph from a room
 - `mempalace_find_tunnels` — find rooms bridging two wings
 
+### Tunnels
+- `mempalace_create_tunnel` — create cross-wing tunnel between two locations
+- `mempalace_list_tunnels` — list all explicit tunnels, optionally by wing
+- `mempalace_delete_tunnel` — delete a tunnel by ID
+- `mempalace_follow_tunnels` — follow tunnels from a room to connected wings
+
 ### Agent Diary
 - `mempalace_diary_write` — write session diary entry (goes to wing_<agent>/diary)
 - `mempalace_diary_read` — read recent diary entries
+
+### Utility
+- `mempalace_hook_settings` — get/set hook behavior (silent_save, desktop_toast)
+- `mempalace_memories_filed_away` — check recent palace checkpoint status
+- `mempalace_reconnect` — force reconnect to palace database after external changes
 
 ---
 
