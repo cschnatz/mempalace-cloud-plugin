@@ -23,6 +23,30 @@ returns a token-expired error:
 
 ---
 
+## Team Vault Routing
+
+Use `mempalace_list_vaults` to discover available vaults at session start.
+
+### Discovery
+Call `list_vaults` once per session. Returns personal vault + all team vaults with names and roles.
+
+### Writing
+- Personal preferences, private notes: omit `vault` param (default: personal)
+- Team/project knowledge: `vault: "team_<uuid>"` (use UUID from list_vaults)
+- When unsure, ask the user: "Store in [Team Name] or Personal?"
+
+### Searching
+- Default: `vault: "all"` searches personal + all team vaults
+- Filter: `vault: "personal"` or `vault: "team_<uuid>"`
+- Results include a `source` tag showing origin (personal or team name)
+
+### Example
+1. `list_vaults` returns `[Personal, "Backend Team" (team_abc-123)]`
+2. `add_drawer(wing="project", room="api", content="...", vault="team_abc-123")`
+3. `search(query="api design")` returns results from both vaults with source tags
+
+---
+
 ## Discovery First: Read the Palace Before You Write
 
 Before your first memory operation in a session, build a mental model of
