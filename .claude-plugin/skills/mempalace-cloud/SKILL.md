@@ -280,9 +280,11 @@ even if the Bootstrap phase ran earlier.
 - `mempalace_add_drawer(wing, room, content)` — verbatim content
   (decisions + reasoning, debugging sessions, design discussions).
   `wing` and `room` are **required** — always specify both.
+  - Use `source_file` for provenance when the memory comes from a specific file.
 - `mempalace_kg_add(entity, predicate, object)` — atomic facts that may
   change over time (preferences, roles, current tech stack)
   - Use `valid_from` when you know when a fact became true: `mempalace_kg_add(entity="auth", relationship="uses", target="zitadel", valid_from="2026-04-09")`
+  - Use `source_closet` to link a fact back to a specific drawer for provenance.
 - `mempalace_diary_write(content)` — narrative session summaries (files
   automatically to `wing_<agent>/diary`)
 
@@ -487,5 +489,6 @@ on a large palace is noisy and slow.
 If you discover a previously-recorded fact is wrong, call
 `mempalace_kg_invalidate` with the specific fact. This doesn't delete the
 fact — it marks it as superseded — but it stops future answers from citing
-it. Useful when a user changes preferences, migrates tech stack, or you
+it. Use `ended` (YYYY-MM-DD) to set a specific end date instead of today.
+Useful when a user changes preferences, migrates tech stack, or you
 learn a past assumption was wrong.
