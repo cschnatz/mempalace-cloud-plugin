@@ -195,7 +195,10 @@ Do Bootstrap + mining offer once per palace, not once per session.
 decision, or past event**, call one of these first:
 
 - `mempalace_kg_query` — structured facts about entities (people, projects, concepts)
+  - Use `as_of` param for point-in-time queries: `mempalace_kg_query(entity="auth_gateway", as_of="2026-03-01")`
+  - Use `direction` to narrow results: `"outgoing"` (what X relates to), `"incoming"` (what relates to X), `"both"` (default)
 - `mempalace_search` — semantic search of free-form memories
+  - `mempalace_search` accepts an optional `context` param for background context (logged for future search augmentation)
 - `mempalace_kg_timeline` — chronological view of events
 - `mempalace_traverse` — follow the palace graph from one room to another
 
@@ -275,9 +278,11 @@ even if the Bootstrap phase ran earlier.
 
 **3. Which tool?**
 - `mempalace_add_drawer(wing, room, content)` — verbatim content
-  (decisions + reasoning, debugging sessions, design discussions)
+  (decisions + reasoning, debugging sessions, design discussions).
+  `wing` and `room` are **required** — always specify both.
 - `mempalace_kg_add(entity, predicate, object)` — atomic facts that may
   change over time (preferences, roles, current tech stack)
+  - Use `valid_from` when you know when a fact became true: `mempalace_kg_add(entity="auth", relationship="uses", target="zitadel", valid_from="2026-04-09")`
 - `mempalace_diary_write(content)` — narrative session summaries (files
   automatically to `wing_<agent>/diary`)
 
