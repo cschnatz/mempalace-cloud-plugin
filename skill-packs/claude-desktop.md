@@ -1,47 +1,149 @@
-# MemPalace Cloud — Claude Desktop Setup
+---
+title: Claude Desktop Skill Pack
+tool: Claude Desktop (Mac/Windows)
+installation_path: Claude Desktop → Project → Instructions
+status: draft for Sprint 7
+---
 
-## Setup
+# Claude Desktop — MemPalace Cloud Skill Pack
 
-### 1. Connect the MCP server
+## Installation
 
-Run this in your terminal:
+Claude Desktop uses MCP servers configured at the OS level and supports per-Project instructions.
 
-```bash
-claude mcp add mempalace-cloud --transport http https://api.mempalace.cloud/mcp -s user
+### Step 1 — Add the MCP server
+
+On **macOS**: edit `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+On **Windows**: edit `%APPDATA%\Claude\claude_desktop_config.json`
+
+Add this entry under `mcpServers`:
+
+```json
+{
+  "mcpServers": {
+    "mempalace-cloud": {
+      "command": "npx",
+      "args": [
+        "@mempalace-cloud/mcp-client",
+        "--url",
+        "https://mcp.mempalace.cloud/u/YOUR_PERSONAL_TOKEN"
+      ]
+    }
+  }
+}
 ```
 
-This opens a browser window for OAuth login. After login, quit and restart
-Claude Desktop.
+Replace `YOUR_PERSONAL_TOKEN` with the value from your MemPalace Cloud dashboard → Settings → MCP URL.
 
-### 2. Add the memory protocol to Custom Instructions
+Restart Claude Desktop. In the chat compose bar, you should see a 🔌 icon
+indicating an MCP server is connected.
 
-Claude Desktop doesn't support plugins, so the memory protocol has to be
-pasted into Custom Instructions once per project (or globally in Settings).
+### Step 2 — Add the skill to a Project
 
-The full, up-to-date instruction block is hosted at:
+Claude Desktop supports "Projects" which have their own instructions. For the
+memory protocol to activate, create a project and paste the skill block below
+into **Project Instructions**.
 
-**https://www.mempalace.cloud/skill-packs/claude-desktop-instructions.md**
+If you prefer a global version that applies to every conversation, paste the
+block into **Settings → Custom Instructions → How would you like Claude to
+respond?** instead.
 
-Copy its content and paste it into:
+## The skill block (copy verbatim)
 
-- **Project:** Open a Project → Project Settings → Custom Instructions
-- **Global:** Settings → Profile → What personal preferences should Claude consider in responses?
+```markdown
+MEMORY PROTOCOL — You have access to the MemPalace Cloud memory system via
+MCP tools prefixed `mempalace_*`. Follow this protocol strictly:
 
-The hosted version is kept in sync with the plugin (currently v3.3.0) and
-includes Discovery First, Palace Structure, the Save Decision Flow with
-Creation Gate, Tunnels, Drawer Management, Utilities, and Anti-patterns.
+BEFORE responding about any person, project, past decision, or past event:
+call `mempalace_kg_query` or `mempalace_search` first. Do not guess. If the
+memory has nothing on the topic, say so: "I don't have anything in memory
+about that yet."
+
+AFTER completing a significant task or learning something new: call
+`mempalace_kg_add` (for atomic facts) or `mempalace_diary_write` (for
+narrative events) or `mempalace_add_drawer` (for larger knowledge chunks).
+Memory-worthy: bugs tracked down, design decisions with rationale, team
+preferences, milestones, lessons learned.
+
+Write freely. All captures land in the user's Inbox for review — they auto-
+approve after 24 hours. Don't second-guess whether something is "worth"
+saving; let the user filter.
+
+When search results are marked `status: pending`, mention them as
+unconfirmed: "Based on a note captured earlier (not yet reviewed): ..."
+
+If you discover a fact is wrong, call `mempalace_kg_invalidate` with the
+specific fact ID.
+
+On every new conversation, you may optionally call `mempalace_status` to
+refresh the protocol reminder and load the AAAK dialect specification.
+
+## Team Vault Routing
+
+Use `list_vaults` to discover available vaults at session start:
+
+### Discovery
+Call `list_vaults` once per session to get available vaults:
+- Returns personal vault + all team vaults with names and roles
+- Cache the result for the session
+
+### Writing
+- Personal preferences, private notes → omit vault param (default: personal)
+- Team/project knowledge → `vault: "team_<uuid>"` (use UUID from list_vaults)
+- When unsure, ask the user: "Store in [Team Name] or Personal?"
+
+### Searching
+- Default: `vault: "all"` — searches personal + all team vaults
+- Filter: `vault: "personal"` or `vault: "team_<uuid>"`
+- Results include a `source` tag showing origin
+
+### Example
+```
+1. list_vaults → [Personal, "Backend Team" (team_abc-123)]
+2. add_drawer(wing="project", room="api", content="...", vault="team_abc-123")
+3. search(query="api design") → results from both vaults with source tags
+```
+```
 
 ## Verification
 
-Start a new conversation in the project and ask:
+Start a new conversation in the project. Ask: "What do you know about my
+projects?"
 
-> "What do you know about my preferences?"
+Claude should respond something like "Let me check my memory..." and you
+should see a tool-call indicator (⚙️ or similar) followed by the response.
 
-Claude should call `mempalace_list_wings` followed by `mempalace_search`
-before answering.
+If you don't see the tool-call, the MCP server isn't connected. Check the
+Claude Desktop logs at `~/Library/Logs/Claude/` (macOS) for MCP connection
+errors.
 
-## Updates
+## Differences from Claude Code
 
-When the plugin version bumps (e.g., 1.3.0 → 3.3.0), re-copy the hosted
-block into your Custom Instructions to stay current. There is no automatic
-update path for pasted instructions.
+- Claude Desktop's Project Instructions are more visible to the user than
+  Claude Code's `CLAUDE.md` — the user can see and edit them in the UI.
+- Claude Desktop does not automatically pick up a project-root `CLAUDE.md`;
+  you must paste the skill into the Project Instructions field explicitly.
+- Claude Desktop's MCP integration is per-installation, not per-project.
+  The MCP URL you paste applies to all conversations and all projects.
+
+## Troubleshooting
+
+**No 🔌 icon in the compose bar**
+- Quit Claude Desktop completely (⌘Q, not just close window) and reopen.
+- Verify the `claude_desktop_config.json` path and JSON syntax. A trailing
+  comma will silently break it.
+
+**Claude never calls memory tools**
+- The Project Instructions aren't being read. Double-check they're in the
+  correct field and not just in chat history.
+- Alternative: put the skill in **Custom Instructions** so it applies
+  globally regardless of project.
+
+**Tool calls fail with 401**
+- Your MCP URL token is expired or was rotated. Go to MemPalace Cloud
+  dashboard → Settings → regenerate your URL.
+
+**Performance is slow on first use**
+- The Python sidecar warm-starts on first request of the day. Subsequent
+  calls should be <200ms.
