@@ -48,7 +48,7 @@ SINCE_LAST=$((COUNT - LAST_SAVE))
 
 if [ "$SINCE_LAST" -ge 15 ] && [ "$COUNT" -gt 0 ]; then
     echo "$COUNT" > "$SAVE_FILE"
-    echo '{"decision":"block","reason":"AUTO-SAVE checkpoint. Save key topics, decisions, and learnings from this session to MemPalace Cloud using mempalace_diary_write and mempalace_kg_add. If MCP token is expired, tell the user to re-authenticate with /mcp. Continue conversation after saving."}'
+    echo '{"decision":"block","reason":"AUTO-SAVE checkpoint. Save to MemPalace Cloud. IMPORTANT: Do NOT just write a diary entry. Instead: (1) Extract specific knowledge (bugs, decisions, architecture, learnings) as add_drawer calls to the correct wing/room. (2) Extract atomic facts as kg_add calls. (3) Only write a diary_write for a brief session summary if the session is ending. Most checkpoints need add_drawer + kg_add, NOT diary_write. If MCP token is expired, tell the user to re-authenticate with /mcp. Continue conversation after saving."}'
 else
     echo '{}'
 fi
