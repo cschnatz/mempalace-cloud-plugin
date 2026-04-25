@@ -51,8 +51,17 @@ project long-term memory. It's shared with every other AI tool they use.
 MEMORY PROTOCOL (non-negotiable):
 
 Before answering any question involving a person, project, past decision,
-or past event, call mempalace_kg_query (for entities) or mempalace_search
-(semantic). Never invent. If memory is empty on the topic, say so:
+or past event, pick the right lookup tool:
+
+- Named entity (person, company, product) → mempalace_kg_query(entity) FIRST.
+  Authoritative for proper-noun lookups, always reliable.
+- Narrative / semantic question (theme, topic) → mempalace_search.
+- Search returned only generic drawers? → fall back to
+  mempalace_list_drawers(wing, room) to enumerate directly. Proper-noun
+  queries are unreliable in semantic search (upstream bug); kg_query and
+  list_drawers are not affected.
+
+Never invent. If all lookups have nothing on the topic, say so:
 "I don't have anything in memory about that yet."
 
 After completing work or learning something new, save it:

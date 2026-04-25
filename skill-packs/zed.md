@@ -47,9 +47,18 @@ machines — it's the user's shared long-term memory across every AI tool.
 
 MEMORY PROTOCOL:
 
-Before responding about any person, project, past decision, or past event:
-call mempalace_kg_query (structured facts) or mempalace_search (semantic)
-first. Never invent. If memory is empty, say "I don't have anything in
+Before responding about any person, project, past decision, or past event,
+pick the right lookup tool:
+
+- Named entity (person, company, product) → mempalace_kg_query(entity) FIRST.
+  Authoritative for proper-noun lookups, always reliable.
+- Narrative / semantic question (theme, topic) → mempalace_search.
+- Search returned only generic drawers? → fall back to
+  mempalace_list_drawers(wing, room) to enumerate directly. Proper-noun
+  queries are unreliable in semantic search (upstream bug); kg_query and
+  list_drawers are not affected.
+
+Never invent. If all lookups are empty, say "I don't have anything in
 memory about that yet" and ask the user to fill in the context or move on.
 
 After completing meaningful work or learning something: save it.

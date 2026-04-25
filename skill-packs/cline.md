@@ -35,9 +35,18 @@ and even other machines — it's the user's shared second brain.
 MEMORY PROTOCOL:
 
 Before answering ANY question about a person, project, past decision, or
-past event, call mempalace_kg_query (structured facts) or mempalace_search
-(semantic) first. Do not invent. If memory is empty on the topic, say so
-plainly: "I don't have anything in memory about that yet."
+past event, pick the right lookup tool first:
+
+- Named entity (person, company, product) → mempalace_kg_query(entity) FIRST.
+  Authoritative for proper-noun lookups, always reliable.
+- Narrative / semantic question (theme, topic) → mempalace_search.
+- Search returned only generic drawers? → fall back to
+  mempalace_list_drawers(wing, room) to enumerate directly. Proper-noun
+  queries are unreliable in semantic search (upstream bug); kg_query and
+  list_drawers are not affected.
+
+Do not invent. If all lookups are empty on the topic, say so plainly:
+"I don't have anything in memory about that yet."
 
 After completing significant work or learning something new, save it:
 - mempalace_kg_add for atomic facts

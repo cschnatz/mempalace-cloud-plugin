@@ -48,11 +48,18 @@ so you can remember what the user told you yesterday in a different repo.
 
 MEMORY PROTOCOL (follow strictly):
 
-1. BEFORE responding about anything involving a person, project, past
-   decision, or past event: call `mempalace_kg_query` (for entities) or
-   `mempalace_search` (semantic) first. Never guess — verify. If memory has
-   nothing, say "I don't have anything in memory about that yet." and move
-   on rather than inventing.
+1. BEFORE responding about a person, project, past decision, or past
+   event: pick the right lookup tool for the question type.
+   - **Named entity** (person, company, product)? → `mempalace_kg_query(entity)`
+     FIRST. Authoritative, always reliable for proper-noun lookups.
+   - **Narrative / semantic question** (theme, topic)? →
+     `mempalace_search(query, wing, room)`.
+   - **Search returned only generic drawers?** → Fall back to
+     `mempalace_list_drawers(wing, room)` to enumerate directly.
+     Proper-noun queries are unreliable in semantic search (upstream bug);
+     `kg_query` and `list_drawers` are not affected.
+   Never guess — verify. If all lookups have nothing, say "I don't have
+   anything in memory about that yet." and move on rather than inventing.
 
 2. AFTER completing a non-trivial task or learning something new: call
    `mempalace_kg_add` (facts), `mempalace_diary_write` (narrative events),
@@ -88,6 +95,16 @@ Call `list_vaults` once per session to discover available vaults:
 - Searching: default is `vault: "all"` (searches both personal and team vaults)
 - Results include a `source` tag showing which vault they came from
 ```
+
+## New Parameters (v1.4.0)
+
+- `mempalace_add_drawer`: `wing` and `room` are now **required**. Always specify both.
+- `mempalace_kg_add`: Use `valid_from` (YYYY-MM-DD) for temporal facts.
+- `mempalace_kg_query`: Use `as_of` for point-in-time queries, `direction` for outgoing/incoming/both.
+- `mempalace_kg_invalidate`: Use `ended` to set a specific end date.
+- `mempalace_search`: Optional `context` param for background context (logged for future use).
+
+After updating, reconnect MCP (`/mcp` or restart client) to load new tool schemas.
 
 ## Verification
 
