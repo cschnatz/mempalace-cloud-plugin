@@ -192,15 +192,21 @@ Do Bootstrap + mining offer once per palace, not once per session.
 ## When to recall (read from memory)
 
 **Before responding about anything related to a person, project, past
-decision, or past event**, call one of these first:
+decision, or past event**, pick the right lookup tool for the question type:
 
-- `mempalace_kg_query` — structured facts about entities (people, projects, concepts)
+- **Named entity** (person, company, product)? → `mempalace_kg_query(entity)`
+  FIRST. Authoritative for proper-noun lookups, always reliable.
   - Use `as_of` param for point-in-time queries: `mempalace_kg_query(entity="auth_gateway", as_of="2026-03-01")`
   - Use `direction` to narrow results: `"outgoing"` (what X relates to), `"incoming"` (what relates to X), `"both"` (default)
-- `mempalace_search` — semantic search of free-form memories
+- **Narrative / semantic question** (theme, topic) → `mempalace_search` —
+  semantic search of free-form memories.
   - `mempalace_search` accepts an optional `context` param for background context (logged for future search augmentation)
-- `mempalace_kg_timeline` — chronological view of events
-- `mempalace_traverse` — follow the palace graph from one room to another
+- **Search returned only generic drawers?** → Fall back to
+  `mempalace_list_drawers(wing, room)` to enumerate directly. Proper-noun
+  queries are unreliable in semantic search (upstream bug); `kg_query`
+  and `list_drawers` are not affected.
+- `mempalace_kg_timeline` — chronological view of events.
+- `mempalace_traverse` — follow the palace graph from one room to another.
 
 If the memory has nothing about the topic, say so explicitly:
 "I don't have anything in memory about that yet." NEVER invent facts.

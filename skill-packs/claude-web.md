@@ -80,12 +80,19 @@ wings: `wing_<project>`, `wing_<user>`, `wing_<agent>`. Okay?"
 
 ## When to recall (read)
 
-Before responding about any person, project, past decision, or event:
+Before responding about any person, project, past decision, or event, pick
+the right tool for the question type:
 
-- `mempalace_search(query, wing, room)` — primary semantic search. **Always
-  pass wing/room filters when you know them.** Unfiltered search is noisy.
-- `mempalace_kg_query(entity)` — facts about a specific entity
-- `mempalace_kg_timeline(entity)` — chronological view
+- **Specific named entity** (person, company, product)? →
+  `mempalace_kg_query(entity)` FIRST. Authoritative, always reliable.
+- **Narrative / semantic question** ("what do we know about retention")? →
+  `mempalace_search(query, wing, room)`. **Always pass wing/room filters
+  when you know them.** Unfiltered search is noisy.
+- **If search returns only generic drawers that don't match your question**
+  → fall back to `mempalace_list_drawers(wing, room)` to enumerate
+  directly. Proper-noun queries are unreliable in semantic search (upstream
+  bug); `kg_query` and `list_drawers` are not affected.
+- `mempalace_kg_timeline(entity)` — chronological view of a known entity
 - `mempalace_traverse(room)` — explore connections from a room
 
 If memory has nothing, say: "I don't have anything in memory about that
@@ -176,6 +183,16 @@ Everything you write lands in the user's Inbox first. They review it
 before it becomes permanent. Untouched items auto-approve after 24 hours.
 Your job is to capture thoughtfully, not to filter.
 ```
+
+## New Parameters (v1.4.0)
+
+- `mempalace_add_drawer`: `wing` and `room` are now **required**. Always specify both.
+- `mempalace_kg_add`: Use `valid_from` (YYYY-MM-DD) for temporal facts.
+- `mempalace_kg_query`: Use `as_of` for point-in-time queries, `direction` for outgoing/incoming/both.
+- `mempalace_kg_invalidate`: Use `ended` to set a specific end date.
+- `mempalace_search`: Optional `context` param for background context (logged for future use).
+
+After updating, reconnect MCP (`/mcp` or restart client) to load new tool schemas.
 
 ## Verification
 

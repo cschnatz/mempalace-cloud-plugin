@@ -34,12 +34,18 @@ and tools — it's the user's shared knowledge with you.
 ## When to recall (read from memory)
 
 **Before responding about anything related to a person, project, past
-decision, or past event**, call one of these first:
+decision, or past event**, pick the right lookup tool for the question type:
 
-- `mempalace_kg_query` — structured facts about entities (people, projects, concepts)
-- `mempalace_search` — semantic search of free-form memories
-- `mempalace_kg_timeline` — chronological view of events
-- `mempalace_traverse` — follow the palace graph from one room to another
+- **Named entity** (person, company, product)? → `mempalace_kg_query(entity)`
+  FIRST. Authoritative for proper-noun lookups, always reliable.
+- **Narrative / semantic question** (theme, topic) → `mempalace_search` —
+  semantic search of free-form memories.
+- **Search returned only generic drawers?** → Fall back to
+  `mempalace_list_drawers(wing, room)` to enumerate directly. Proper-noun
+  queries are unreliable in semantic search (upstream bug); `kg_query`
+  and `list_drawers` are not affected.
+- `mempalace_kg_timeline` — chronological view of events.
+- `mempalace_traverse` — follow the palace graph from one room to another.
 
 If the memory has nothing about the topic, say so explicitly:
 "I don't have anything in memory about that yet." NEVER invent facts.
@@ -120,6 +126,16 @@ If you're unsure whether the memory system is connected, call
 `mempalace_status`. It returns the current palace state and a "protocol
 reminder" string you should follow on every response.
 ```
+
+## New Parameters (v1.4.0)
+
+- `mempalace_add_drawer`: `wing` and `room` are now **required**. Always specify both.
+- `mempalace_kg_add`: Use `valid_from` (YYYY-MM-DD) for temporal facts.
+- `mempalace_kg_query`: Use `as_of` for point-in-time queries, `direction` for outgoing/incoming/both.
+- `mempalace_kg_invalidate`: Use `ended` to set a specific end date.
+- `mempalace_search`: Optional `context` param for background context (logged for future use).
+
+After updating, reconnect MCP (`/mcp` or restart client) to load new tool schemas.
 
 ## Verification
 

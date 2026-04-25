@@ -192,12 +192,21 @@ Do Bootstrap + mining offer once per palace, not once per session.
 ## When to recall (read from memory)
 
 **Before responding about anything related to a person, project, past
-decision, or past event**, call one of these first:
+decision, or past event**, pick the right lookup tool for the question type:
 
-- `mempalace_kg_query` — structured facts about entities (people, projects, concepts)
-- `mempalace_search` — semantic search of free-form memories
-- `mempalace_kg_timeline` — chronological view of events
-- `mempalace_traverse` — follow the palace graph from one room to another
+- **Named entity** (person, company, product)? → `mempalace_kg_query(entity)`
+  FIRST. Authoritative for proper-noun lookups, always reliable.
+  - Use `as_of` param for point-in-time queries: `mempalace_kg_query(entity="auth_gateway", as_of="2026-03-01")`
+  - Use `direction` to narrow results: `"outgoing"` (what X relates to), `"incoming"` (what relates to X), `"both"` (default)
+- **Narrative / semantic question** (theme, topic) → `mempalace_search` —
+  semantic search of free-form memories.
+  - `mempalace_search` accepts an optional `context` param for background context (logged for future search augmentation)
+- **Search returned only generic drawers?** → Fall back to
+  `mempalace_list_drawers(wing, room)` to enumerate directly. Proper-noun
+  queries are unreliable in semantic search (upstream bug); `kg_query`
+  and `list_drawers` are not affected.
+- `mempalace_kg_timeline` — chronological view of events.
+- `mempalace_traverse` — follow the palace graph from one room to another.
 
 If the memory has nothing about the topic, say so explicitly:
 "I don't have anything in memory about that yet." NEVER invent facts.
@@ -275,9 +284,13 @@ even if the Bootstrap phase ran earlier.
 
 **3. Which tool?**
 - `mempalace_add_drawer(wing, room, content)` — verbatim content
-  (decisions + reasoning, debugging sessions, design discussions)
+  (decisions + reasoning, debugging sessions, design discussions).
+  `wing` and `room` are **required** — always specify both.
+  - Use `source_file` for provenance when the memory comes from a specific file.
 - `mempalace_kg_add(entity, predicate, object)` — atomic facts that may
   change over time (preferences, roles, current tech stack)
+  - Use `valid_from` when you know when a fact became true: `mempalace_kg_add(entity="auth", relationship="uses", target="zitadel", valid_from="2026-04-09")`
+  - Use `source_closet` to link a fact back to a specific drawer for provenance.
 - `mempalace_diary_write(content)` — narrative session summaries (files
   automatically to `wing_<agent>/diary`)
 
@@ -482,5 +495,6 @@ on a large palace is noisy and slow.
 If you discover a previously-recorded fact is wrong, call
 `mempalace_kg_invalidate` with the specific fact. This doesn't delete the
 fact — it marks it as superseded — but it stops future answers from citing
-it. Useful when a user changes preferences, migrates tech stack, or you
+it. Use `ended` (YYYY-MM-DD) to set a specific end date instead of today.
+Useful when a user changes preferences, migrates tech stack, or you
 learn a past assumption was wrong.

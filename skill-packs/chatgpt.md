@@ -52,9 +52,11 @@ You have persistent memory via `mempalace_*` MCP tools. Memory spans all session
 Before your first memory operation, call `mempalace_list_wings` then `mempalace_list_rooms(wing)` for relevant wings. Know the palace before you write.
 
 ## When to recall
-Before answering about any person, project, or past event, search first:
-- `mempalace_search(query, wing, room)` — always pass wing/room filters
-- `mempalace_kg_query(entity)` — facts about a specific entity
+Before answering about any person, project, or past event, pick the right tool:
+- **Named entity** (person, company, product)? → `mempalace_kg_query(entity)` FIRST. Authoritative, always reliable.
+- **Narrative question** (theme, topic, event)? → `mempalace_search(query, wing, room)` — always pass wing/room filters.
+- **Search returned only generic drawers?** → Fall back to `mempalace_list_drawers(wing, room)` to enumerate directly. Proper-noun queries are unreliable in semantic search (upstream bug); `kg_query` and `list_drawers` are not affected.
+
 If nothing found, say so. Never invent facts.
 
 ## Save Decision Flow
@@ -76,6 +78,16 @@ Call `list_vaults` once per session. Use `vault: "team_<uuid>"` for team knowled
 
 Everything you save lands in the user's Inbox for review first.
 ```
+
+## New Parameters (v1.4.0)
+
+- `mempalace_add_drawer`: `wing` and `room` are now **required**. Always specify both.
+- `mempalace_kg_add`: Use `valid_from` (YYYY-MM-DD) for temporal facts.
+- `mempalace_kg_query`: Use `as_of` for point-in-time queries, `direction` for outgoing/incoming/both.
+- `mempalace_kg_invalidate`: Use `ended` to set a specific end date.
+- `mempalace_search`: Optional `context` param for background context (logged for future use).
+
+After updating, reconnect MCP (`/mcp` or restart client) to load new tool schemas.
 
 ## Verification
 

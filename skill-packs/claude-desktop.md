@@ -55,10 +55,23 @@ respond?** instead.
 MEMORY PROTOCOL — You have access to the MemPalace Cloud memory system via
 MCP tools prefixed `mempalace_*`. Follow this protocol strictly:
 
-BEFORE responding about any person, project, past decision, or past event:
-call `mempalace_kg_query` or `mempalace_search` first. Do not guess. If the
-memory has nothing on the topic, say so: "I don't have anything in memory
-about that yet."
+BEFORE responding about any person, project, past decision, or past event,
+pick the right lookup tool for the question type:
+
+• Specific named entity (person, company, product name)? → Call
+  `mempalace_kg_query(entity="<normalized_name>")` FIRST. The knowledge
+  graph is authoritative for named facts and direct lookup is always
+  reliable.
+• Narrative / semantic question ("what do we know about retention")? →
+  Call `mempalace_search(query="...")`.
+• If `mempalace_search` returns only generic drawers that do not match
+  your question → fall back to `mempalace_list_drawers(wing=..., room=...)`
+  to enumerate rooms directly. Proper-noun queries are unreliable in
+  semantic search (upstream bug); `kg_query` and `list_drawers` are not
+  affected.
+
+Do not guess. If all lookups turn up nothing, say so: "I don't have
+anything in memory about that yet."
 
 AFTER completing a significant task or learning something new: call
 `mempalace_kg_add` (for atomic facts) or `mempalace_diary_write` (for
@@ -105,6 +118,16 @@ Call `list_vaults` once per session to get available vaults:
 3. search(query="api design") → results from both vaults with source tags
 ```
 ```
+
+## New Parameters (v1.4.0)
+
+- `mempalace_add_drawer`: `wing` and `room` are now **required**. Always specify both.
+- `mempalace_kg_add`: Use `valid_from` (YYYY-MM-DD) for temporal facts.
+- `mempalace_kg_query`: Use `as_of` for point-in-time queries, `direction` for outgoing/incoming/both.
+- `mempalace_kg_invalidate`: Use `ended` to set a specific end date.
+- `mempalace_search`: Optional `context` param for background context (logged for future use).
+
+After updating, reconnect MCP (`/mcp` or restart client) to load new tool schemas.
 
 ## Verification
 
