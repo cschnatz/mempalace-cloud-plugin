@@ -1,6 +1,6 @@
 {
   "name": "mempalace-cloud",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Persistent AI memory as a service — connect to MemPalace Cloud via OAuth MCP. Includes memory protocol skill that teaches Claude when to recall and save memories.",
   "author": {
     "name": "cschnatz"
