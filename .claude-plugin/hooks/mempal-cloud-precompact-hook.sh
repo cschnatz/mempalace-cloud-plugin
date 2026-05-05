@@ -1,16 +1,13 @@
 #!/bin/bash
-# MemPalace Cloud PreCompact Hook — save everything before context compaction
-# First call: block and create marker so Claude saves memory
-# Second call: allow compaction (marker exists = Claude already saved)
-
-MARKER="/tmp/mempalace-precompact-saved-${PPID}"
-
-if [ -f "$MARKER" ]; then
-  # Claude already saved — allow compaction and clean up
-  rm -f "$MARKER"
-  echo '{"decision":"approve"}'
-else
-  # First call — block and tell Claude to save
-  touch "$MARKER"
-  echo '{"decision":"block","reason":"COMPACTION IMMINENT. Save ALL topics, decisions, quotes, code, and important context from this session to MemPalace Cloud. Use mempalace_diary_write for narrative summaries, mempalace_kg_add for atomic facts, and mempalace_add_drawer for larger knowledge chunks. Be thorough — after compaction, detailed context will be lost. If MCP token is expired, tell the user to re-authenticate with /mcp. Save everything, then allow compaction to proceed."}'
-fi
+# MemPalace Cloud PreCompact Hook — silent approve.
+#
+# Earlier versions blocked the first /compact call to force Claude to save
+# memory, then approved on the second call (PPID-marker pattern). In
+# practice, Claude Code surfaces a PreCompact `block` decision directly to
+# the user as an error, so users had to type /compact twice. The Stop hook
+# (every 15 messages) already handles periodic saves, so blocking here was
+# net negative.
+#
+# Now: always approve. If you want a comprehensive save before compaction,
+# ask Claude to do it explicitly before running /compact.
+echo '{"decision":"approve"}'

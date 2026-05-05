@@ -9,7 +9,7 @@
       "name": "mempalace-cloud",
       "source": "./.claude-plugin",
       "description": "Persistent AI memory as a service. Connects via OAuth MCP — no API keys, no local setup. Includes memory protocol skill.",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "author": {
         "name": "cschnatz"
       }
